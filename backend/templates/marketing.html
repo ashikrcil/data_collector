@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Marketing Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      min-height: calc(100% - 40px);
+    }
+
+    h1 {
+      color: #800000;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-section {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #800000;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #990000;
+      transform: translateY(-2px);
+    }
+
+    .customer-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .customer-table th,
+    .customer-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .customer-table th {
+      background-color: #800000;
+      color: white;
+      font-weight: 500;
+    }
+
+    .customer-table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+    .top-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 15px;
+      background-color: #800000;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-button:hover {
+      background-color: #990000;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .container {
+        width: 95%;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-buttons">
+      <a href="/dashboard" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Dashboard
+      </a>
+      <a href="/logout" class="back-button">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </a>
+    </div>
+
+    <h1>Marketing Register</h1>
+
+    <div class="form-section">
+      <form id="marketingForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="branch">Branch</label>
+            <select id="branch" name="branch" required>
+              {% if user_branches %}
+                {% for branch in user_branches %}
+                  <option value="{{ branch }}">{{ branch }}</option>
+                {% endfor %}
+              {% else %}
+                <option value="">No branches assigned</option>
+              {% endif %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="staffNames">Staff Names</label>
+            <div style="display: flex; gap: 5px;">
+              <input type="text" id="staffNames" readonly>
+              <button type="button" onclick="addStaff()" style="width: auto; padding: 0 10px;">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="marketingType">Type of Marketing</label>
+            <select id="marketingType" required>
+              <option value="door_to_door">Door to Door Marketing</option>
+              <option value="shops">Shops</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location</label>
+            <div style="display: flex; gap: 5px;">
+              <input type="text" id="location" readonly required>
+              <button type="button" onclick="getLocation()" style="width: auto; padding: 0 10px;">
+                <i class="fas fa-map-marker-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="startTime">Marketing Start Time</label>
+            <input type="datetime-local" id="startTime" required>
+          </div>
+
+          <div class="form-group">
+            <label for="endTime">Marketing End Time</label>
+            <input type="datetime-local" id="endTime" required>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="form-section">
+      <h2 style="margin-top: 0; color: #800000;">Customer Data</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customerName">Customer Name</label>
+          <input type="text" id="customerName" required>
+        </div>
+        <div class="form-group">
+          <label for="product">Product</label>
+          <select id="product" required>
+            <option value="BL">BL</option>
+            <option value="SD">SD</option>
+            <option value="GL">GL</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="mobileNumber">Mobile Number</label>
+          <input type="text" id="mobileNumber" required>
+        </div>
+        <div class="form-group">
+          <label for="customerProfile">Customer Profile</label>
+          <input type="text" id="customerProfile" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nextFollowUpDate">Next Follow Up Date</label>
+          <input type="date" id="nextFollowUpDate" required>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <div style="display: flex; gap: 15px; margin-top: 5px;">
+            <label><input type="radio" name="status" value="poor"> Poor</label>
+            <label><input type="radio" name="status" value="warm"> Warm</label>
+            <label><input type="radio" name="status" value="hot"> Hot</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="customerImage">Upload Customer Image</label>
+        <input type="file" id="customerImage" accept="image/*">
+      </div>
+
+      <button type="button" onclick="addCustomer()" style="margin-top: 15px;">
+        <i class="fas fa-plus"></i> Add Customer
+      </button>
+    </div>
+
+    <table class="customer-table">
+      <thead>
+        <tr>
+          <th>Customer Name</th>
+          <th>Product</th>
+          <th>Mobile Number</th>
+          <th>Profile</th>
+          <th>Follow-up Date</th>
+          <th>Status</th>
+          <th>Image</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="customerTableBody">
+        <!-- Customer entries will be added here -->
+      </tbody>
+    </table>
+
+    <div class="action-buttons">
+      <button type="button" onclick="submitForm()">
+        <i class="fas fa-save"></i> Submit All Data
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let customers = [];
+    let imagePreview = null;
+
+    function addStaff() {
+      const name = prompt("Enter staff name:");
+      const field = document.getElementById("staffNames");
+      if (name) {
+        field.value += field.value ? `, ${name}` : name;
+      }
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const lat = position.coords.latitude.toFixed(5);
+            const lon = position.coords.longitude.toFixed(5);
+            document.getElementById("location").value = `Lat: ${lat}, Lng: ${lon}`;
+          },
+          () => alert("Unable to get location.")
+        );
+      } else {
+        alert("Geolocation not supported.");
+      }
+    }
+
+    function addCustomer() {
+      const customer = {
+        name: document.getElementById("customerName").value,
+        product: document.getElementById("product").value,
+        mobile: document.getElementById("mobileNumber").value,
+        profile: document.getElementById("customerProfile").value,
+        followUpDate: document.getElementById("nextFollowUpDate").value,
+        status: document.querySelector('input[name="status"]:checked')?.value || '',
+        image: document.getElementById("customerImage").files[0]
+      };
+
+      if (!customer.name || !customer.product || !customer.mobile || !customer.profile || !customer.followUpDate || !customer.status) {
+        alert("Please fill in all customer details");
+        return;
+      }
+
+      customers.push(customer);
+      updateCustomerTable();
+      clearCustomerForm();
+    }
+
+    function updateCustomerTable() {
+      const tbody = document.getElementById("customerTableBody");
+      tbody.innerHTML = customers.map((customer, index) => {
+        let imagePreview = '';
+        if (customer.image) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById(`imagePreview-${index}`).src = e.target.result;
+          };
+          reader.readAsDataURL(customer.image);
+          imagePreview = `<img id="imagePreview-${index}" src="#" alt="Customer Image" style="max-width: 50px; max-height: 50px; object-fit: cover; border-radius: 4px;">`;
+        }
+
+        return `
+          <tr>
+            <td>${customer.name}</td>
+            <td>${customer.product}</td>
+            <td>${customer.mobile}</td>
+            <td>${customer.profile}</td>
+            <td>${customer.followUpDate}</td>
+            <td>${customer.status}</td>
+            <td>${imagePreview}</td>
+            <td>
+              <button class="delete-btn" onclick="removeCustomer(${index})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function removeCustomer(index) {
+      customers.splice(index, 1);
+      updateCustomerTable();
+    }
+
+    function clearCustomerForm() {
+      document.getElementById("customerName").value = '';
+      document.getElementById("product").value = 'BL';
+      document.getElementById("mobileNumber").value = '';
+      document.getElementById("customerProfile").value = '';
+      document.getElementById("nextFollowUpDate").value = '';
+      document.querySelectorAll('input[name="status"]').forEach(radio => radio.checked = false);
+      document.getElementById("customerImage").value = '';
+    }
+
+    async function submitForm() {
+      if (customers.length === 0) {
+        alert("Please add at least one customer");
+        return;
+      }
+
+      // Create FormData object to handle file uploads
+      const formData = new FormData();
+      
+      // Add basic form data
+      formData.append('branch', document.getElementById("branch").value);
+      formData.append('staffNames', document.getElementById("staffNames").value);
+      formData.append('marketingType', document.getElementById("marketingType").value);
+      formData.append('location', document.getElementById("location").value);
+      formData.append('startTime', document.getElementById("startTime").value);
+      formData.append('endTime', document.getElementById("endTime").value);
+
+      // Process customers data
+      const processedCustomers = customers.map(customer => {
+        const customerData = {
+          name: customer.name,
+          product: customer.product,
+          mobile: customer.mobile,
+          profile: customer.profile,
+          followUpDate: customer.followUpDate,
+          status: customer.status
+        };
+        
+        // If there's an image, add it to FormData
+        if (customer.image) {
+          formData.append(`customer_image_${customer.name}`, customer.image);
+          customerData.imageName = customer.image.name;
+        }
+        
+        return customerData;
+      });
+
+      // Add processed customers data
+      formData.append('customers', JSON.stringify(processedCustomers));
+
+      try {
+        const response = await fetch('/submit_marketing', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          alert("Data submitted successfully");
+          window.location.href = '/dashboard';
+        } else {
+          const errorData = await response.json();
+          alert(`Error submitting data: ${errorData.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert("Error submitting data. Please try again.");
+      }
+    }
+  </script>
+</body>
+</html>

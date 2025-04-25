@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Collection Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #800000;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-button {
+            padding: 8px 15px;
+            background-color: #800000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #800000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .collection-centers {
+            margin-top: 20px;
+        }
+
+        .center-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .center-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .center-title {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .remove-btn {
+            color: #d32f2f;
+            cursor: pointer;
+        }
+
+        .customer-list {
+            margin-top: 10px;
+        }
+
+        .customer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .customer-item:last-child {
+            border-bottom: none;
+        }
+
+        .customer-info {
+            flex: 1;
+        }
+
+        .amount-input {
+            width: 100px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .start-btn, .end-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .start-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .end-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #666;
+        }
+
+        .summary-value {
+            font-weight: 500;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-money-bill-wave"></i>
+                Daily Collection Tracker
+            </h1>
+            <a href="/dashboard" class="nav-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <div class="form-card">
+            <div class="form-group">
+                <label>Collection Center</label>
+                <input type="text" id="centerName" placeholder="Enter collection center name">
+            </div>
+            <div class="form-group">
+                <label>Branch</label>
+                <select id="branchSelect">
+                    {% if user_branches %}
+                        {% for branch in user_branches %}
+                            <option value="{{ branch }}">{{ branch }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">No branches assigned</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Collection Staff</label>
+                <input type="text" id="staffName" placeholder="Enter staff name">
+            </div>
+            <button class="add-btn" onclick="addCollectionCenter()">
+                <i class="fas fa-plus"></i>
+                Add Collection Center
+            </button>
+        </div>
+
+        <div class="collection-centers" id="collectionCenters">
+            <!-- Collection centers will be added here -->
+        </div>
+
+        <div class="action-buttons">
+            <button class="start-btn" onclick="startCollection()">
+                <i class="fas fa-play"></i>
+                Start Collection
+            </button>
+            <button class="end-btn" onclick="endCollection()">
+                <i class="fas fa-stop"></i>
+                End Collection
+            </button>
+        </div>
+
+        <div class="summary-card" id="summaryCard" style="display: none;">
+            <h2>Collection Summary</h2>
+            <div class="summary-item">
+                <span class="summary-label">Total Amount Collected:</span>
+                <span class="summary-value" id="totalAmount">₹0</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Distance Traveled:</span>
+                <span class="summary-value" id="totalDistance">0 km</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Number of Centers Visited:</span>
+                <span class="summary-value" id="centersVisited">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let collectionCenters = [];
+        let currentLocation = null;
+        let watchId = null;
+        let isCollecting = false;
+        let totalDistance = 0;
+        let lastLocation = null;
+
+        function addCollectionCenter() {
+            const centerName = document.getElementById('centerName').value;
+            const branch = document.getElementById('branchSelect').value;
+            const staffName = document.getElementById('staffName').value;
+
+            if (!centerName || !branch || !staffName) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const center = {
+                id: Date.now(),
+                name: centerName,
+                branch: branch,
+                staff: staffName,
+                customers: []
+            };
+
+            collectionCenters.push(center);
+            renderCollectionCenters();
+            clearForm();
+        }
+
+        function renderCollectionCenters() {
+            const container = document.getElementById('collectionCenters');
+            container.innerHTML = '';
+
+            collectionCenters.forEach(center => {
+                const centerCard = document.createElement('div');
+                centerCard.className = 'center-card';
+                centerCard.innerHTML = `
+                    <div class="center-header">
+                        <span class="center-title">${center.name} - ${center.branch}</span>
+                        <i class="fas fa-times remove-btn" onclick="removeCenter(${center.id})"></i>
+                    </div>
+                    <div class="customer-list">
+                        ${center.customers.map(customer => `
+                            <div class="customer-item">
+                                <div class="customer-info">
+                                    <strong>Customer ID:</strong> ${customer.id}
+                                    <div>Location: ${customer.location}</div>
+                                </div>
+                                <input type="number" class="amount-input" placeholder="Amount" 
+                                    onchange="updateAmount(${center.id}, '${customer.id}', this.value)">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(centerCard);
+            });
+        }
+
+        function removeCenter(centerId) {
+            collectionCenters = collectionCenters.filter(center => center.id !== centerId);
+            renderCollectionCenters();
+        }
+
+        function clearForm() {
+            document.getElementById('centerName').value = '';
+            document.getElementById('staffName').value = '';
+        }
+
+        function startCollection() {
+            if (collectionCenters.length === 0) {
+                alert('Please add at least one collection center');
+                return;
+            }
+
+            isCollecting = true;
+            watchId = navigator.geolocation.watchPosition(
+                position => {
+                    currentLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    if (lastLocation) {
+                        const distance = calculateDistance(
+                            lastLocation.lat, lastLocation.lng,
+                            currentLocation.lat, currentLocation.lng
+                        );
+                        totalDistance += distance;
+                    }
+                    lastLocation = { ...currentLocation };
+
+                    // Check if we're near any collection center
+                    checkNearbyCenters();
+                },
+                error => {
+                    console.error('Error getting location:', error);
+                    alert('Error getting location. Please enable location services.');
+                },
+                { enableHighAccuracy: true }
+            );
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the earth in km
+            const dLat = deg2rad(lat2 - lat1);
+            const dLon = deg2rad(lon2 - lon1);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2); 
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            return R * c;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180);
+        }
+
+        function checkNearbyCenters() {
+            // This is a simplified version. In a real app, you'd want to:
+            // 1. Check if the current location is near any collection center
+            // 2. If yes, show the customer IDs for that center
+            // 3. Allow amount entry for those customers
+        }
+
+        function endCollection() {
+            if (!isCollecting) {
+                alert('Collection not started');
+                return;
+            }
+
+            isCollecting = false;
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+
+            // Calculate total amount
+            let totalAmount = 0;
+            let centersVisited = 0;
+
+            collectionCenters.forEach(center => {
+                center.customers.forEach(customer => {
+                    if (customer.amount) {
+                        totalAmount += parseFloat(customer.amount);
+                        centersVisited++;
+                    }
+                });
+            });
+
+            // Show summary
+            document.getElementById('summaryCard').style.display = 'block';
+            document.getElementById('totalAmount').textContent = `₹${totalAmount.toFixed(2)}`;
+            document.getElementById('totalDistance').textContent = `${totalDistance.toFixed(2)} km`;
+            document.getElementById('centersVisited').textContent = centersVisited;
+
+            // Save collection data
+            saveCollectionData(totalAmount, totalDistance, centersVisited);
+        }
+
+        function saveCollectionData(totalAmount, totalDistance, centersVisited) {
+            const data = {
+                username: '{{ session.username }}',
+                centers: collectionCenters,
+                totalAmount,
+                totalDistance,
+                centersVisited,
+                timestamp: new Date().toISOString()
+            };
+
+            fetch('/submit_collection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to save data');
+                }
+                alert('Collection data saved successfully');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save collection data');
+            });
+        }
+
+        function updateAmount(centerId, customerId, amount) {
+            const center = collectionCenters.find(c => c.id === centerId);
+            if (center) {
+                const customer = center.customers.find(c => c.id === customerId);
+                if (customer) {
+                    customer.amount = amount;
+                }
+            }
+        }
+    </script>
+</body>
+</html> 

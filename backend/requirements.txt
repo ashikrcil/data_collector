@@ -1,0 +1,8 @@
+flask
+firebase-admin
+python-dotenv
+werkzeug
+Flask==2.2.5
+firebase-admin==6.2.0
+python-dotenv==1.0.1
+

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reference Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #800000;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #990000;
+      transform: translateY(-2px);
+    }
+
+    .customer-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .customer-table th,
+    .customer-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .customer-table th {
+      background-color: #800000;
+      color: white;
+      font-weight: 500;
+    }
+
+    .customer-table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+    .top-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 15px;
+      background-color: #800000;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-button:hover {
+      background-color: #990000;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .container {
+        width: 95%;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-buttons">
+      <a href="/dashboard" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Dashboard
+      </a>
+      <a href="/logout" class="back-button">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </a>
+    </div>
+
+    <h1 style="color: #800000; text-align: center; margin-bottom: 20px;">Reference Register</h1>
+
+    <div class="form-section">
+      <form id="referenceForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customer_type">Customer Type</label>
+            <select name="customer_type" id="customer_type" required onchange="toggleCustomerIdField()">
+              <option value="">Select</option>
+              <option value="Existing Customer">Existing Customer</option>
+              <option value="Rollback Customer">Rollback Customer</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="customer_id_group" style="display: none;">
+            <label for="customer_id">Customer ID</label>
+            <input type="text" id="customer_id" name="customer_id" placeholder="Enter Customer ID">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="branch">Branch</label>
+            <select name="branch" id="branch" required>
+              {% if user_branches %}
+                {% for branch in user_branches %}
+                  <option value="{{ branch }}">{{ branch }}</option>
+                {% endfor %}
+              {% else %}
+                <option value="">No branches assigned</option>
+              {% endif %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reference_name">Reference Name</label>
+            <input type="text" id="reference_name" name="reference_name" placeholder="Enter reference name" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contact">Contact Number</label>
+            <input type="number" id="contact" name="contact" placeholder="Enter contact number" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reference_date">Date of Reference</label>
+            <input type="date" id="reference_date" name="reference_date" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="remark">Remark</label>
+            <input type="text" id="remark" name="remark" placeholder="Enter remarks" required>
+          </div>
+
+          <div class="form-group">
+            <label for="next_followup">Next Follow-up Date</label>
+            <input type="date" id="next_followup" name="next_followup" required>
+          </div>
+        </div>
+
+        <button type="button" onclick="addReference()" style="margin-top: 15px;">
+          <i class="fas fa-plus"></i> Add Reference
+        </button>
+      </form>
+    </div>
+
+    <table class="customer-table">
+      <thead>
+        <tr>
+          <th>Reference Name</th>
+          <th>Contact</th>
+          <th>Customer Type</th>
+          <th>Customer ID</th>
+          <th>Branch</th>
+          <th>Date</th>
+          <th>Next Follow-up</th>
+          <th>Remark</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="referenceTableBody">
+        <!-- Reference entries will be added here -->
+      </tbody>
+    </table>
+
+    <div class="action-buttons">
+      <button type="button" onclick="submitForm()">
+        <i class="fas fa-save"></i> Submit All Data
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let references = [];
+
+    function toggleCustomerIdField() {
+      const customerType = document.getElementById('customer_type').value;
+      const customerIdGroup = document.getElementById('customer_id_group');
+      customerIdGroup.style.display = (customerType === 'Existing Customer') ? 'block' : 'none';
+    }
+
+    function addReference() {
+      const reference = {
+        customerType: document.getElementById("customer_type").value,
+        customerId: document.getElementById("customer_id").value,
+        branch: document.getElementById("branch").value,
+        referenceName: document.getElementById("reference_name").value,
+        contact: document.getElementById("contact").value,
+        referenceDate: document.getElementById("reference_date").value,
+        remark: document.getElementById("remark").value,
+        nextFollowup: document.getElementById("next_followup").value
+      };
+
+      if (!reference.customerType || !reference.branch || !reference.referenceName || 
+          !reference.contact || !reference.referenceDate || !reference.remark || 
+          !reference.nextFollowup) {
+        alert("Please fill in all required fields");
+        return;
+      }
+
+      if (reference.customerType === 'Existing Customer' && !reference.customerId) {
+        alert("Please enter Customer ID for Existing Customer");
+        return;
+      }
+
+      references.push(reference);
+      updateReferenceTable();
+      clearReferenceForm();
+    }
+
+    function updateReferenceTable() {
+      const tbody = document.getElementById("referenceTableBody");
+      tbody.innerHTML = references.map((reference, index) => `
+        <tr>
+          <td>${reference.referenceName}</td>
+          <td>${reference.contact}</td>
+          <td>${reference.customerType}</td>
+          <td>${reference.customerId || '-'}</td>
+          <td>${reference.branch}</td>
+          <td>${reference.referenceDate}</td>
+          <td>${reference.nextFollowup}</td>
+          <td>${reference.remark}</td>
+          <td>
+            <button class="delete-btn" onclick="removeReference(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function removeReference(index) {
+      references.splice(index, 1);
+      updateReferenceTable();
+    }
+
+    function clearReferenceForm() {
+      document.getElementById("customer_type").value = '';
+      document.getElementById("customer_id").value = '';
+      document.getElementById("reference_name").value = '';
+      document.getElementById("contact").value = '';
+      document.getElementById("reference_date").value = '';
+      document.getElementById("remark").value = '';
+      document.getElementById("next_followup").value = '';
+      toggleCustomerIdField();
+    }
+
+    async function submitForm() {
+      if (references.length === 0) {
+        alert("Please add at least one reference");
+        return;
+      }
+
+      const formData = {
+        references: references
+      };
+
+      try {
+        const response = await fetch('/submit_reference', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          alert("Data submitted successfully");
+          window.location.href = '/dashboard';
+        } else {
+          alert("Error submitting data");
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert("Error submitting data");
+      }
+    }
+  </script>
+</body>
+</html>

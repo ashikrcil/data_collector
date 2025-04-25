@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Managers Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background-color: #800000;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        h1 {
+            color: #800000;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 8px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        select, input[type="text"], input[type="datetime-local"], textarea {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        textarea {
+            height: 40px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 3px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-top: 3px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 12px;
+        }
+
+        .location-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .location-row input {
+            flex: 1;
+        }
+
+        .location-icon {
+            font-size: 16px;
+            color: #800000;
+            cursor: pointer;
+        }
+
+        .add-branch-btn {
+            width: 100%;
+            padding: 8px;
+            background-color: #800000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .branch-section {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .branch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .branch-title {
+            font-size: 14px;
+            color: #800000;
+        }
+
+        .remove-branch {
+            color: #800000;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-buttons">
+            <a href="/dashboard" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Dashboard
+            </a>
+            <a href="/logout" class="back-button">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+
+        <h1><i class="fas fa-user-tie"></i> Area Managers Register</h1>
+
+        <form id="areaManagerForm">
+            <div id="branches-container">
+                <div class="branch-section">
+                    <div class="branch-header">
+                        <span class="branch-title">Branch 1</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-building"></i> Branch</label>
+                        <select name="branch" required>
+                            {% if user_branches %}
+                                {% for branch in user_branches %}
+                                    <option value="{{ branch }}">{{ branch }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="">No branches assigned</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Check-in Time</label>
+                        <input type="datetime-local" name="checkin_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                        <div class="location-row">
+                            <input type="text" name="location" readonly required>
+                            <i class="fas fa-location-arrow location-icon" onclick="getLocation(this)"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-bullhorn"></i> Marketing</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="marketing" value="yes" required>
+                                    Yes
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="marketing" value="no" required>
+                                    No
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-eye"></i> General Observation</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="observation">
+                                    Completed
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-road"></i> Five Fold Path</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="five_fold">
+                                    Completed
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Branch Remarks</label>
+                        <textarea name="remarks" rows="1"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Check-out Time</label>
+                        <input type="datetime-local" name="checkout_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-arrow-right"></i> Next Visiting Branch</label>
+                        <select name="next_branch" required>
+                            {% if user_branches %}
+                                {% for branch in user_branches %}
+                                    <option value="{{ branch }}">{{ branch }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="">No branches assigned</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="add-branch-btn" onclick="addBranch()">
+                <i class="fas fa-plus"></i>
+                Add Next Branch Data
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let branchCount = 1;
+
+        function getLocation(inputElement) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude.toFixed(5);
+                        const lon = position.coords.longitude.toFixed(5);
+                        inputElement.parentElement.querySelector('input[name="location"]').value = `Lat: ${lat}, Lng: ${lon}`;
+                    },
+                    () => alert("Unable to get location.")
+                );
+            } else {
+                alert("Geolocation not supported.");
+            }
+        }
+
+        async function saveBranchData(branchSection) {
+            const formData = {
+                branch: branchSection.querySelector('select[name="branch"]').value,
+                checkin_time: branchSection.querySelector('input[name="checkin_time"]').value,
+                location: branchSection.querySelector('input[name="location"]').value,
+                marketing: branchSection.querySelector('input[name="marketing"]:checked')?.value || 
+                         branchSection.querySelector(`input[name="marketing_${branchCount}"]:checked`)?.value,
+                observation: branchSection.querySelector('input[name="observation"]')?.checked || 
+                           branchSection.querySelector(`input[name="observation_${branchCount}"]`)?.checked,
+                five_fold: branchSection.querySelector('input[name="five_fold"]')?.checked || 
+                          branchSection.querySelector(`input[name="five_fold_${branchCount}"]`)?.checked,
+                remarks: branchSection.querySelector('textarea[name="remarks"]')?.value || 
+                        branchSection.querySelector(`textarea[name="remarks_${branchCount}"]`)?.value,
+                checkout_time: branchSection.querySelector('input[name="checkout_time"]').value,
+                next_branch: branchSection.querySelector('select[name="next_branch"]').value,
+                username: '{{ session.username }}'
+            };
+
+            try {
+                const response = await fetch('/submit_area_manager', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save data');
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Error saving data:', error);
+                alert('Failed to save data. Please try again.');
+                return false;
+            }
+        }
+
+        async function addBranch() {
+            const container = document.getElementById('branches-container');
+            const currentBranch = container.querySelector('.branch-section');
+            
+            // Save current branch data
+            const saved = await saveBranchData(currentBranch);
+            if (!saved) return;
+
+            // Clear current branch fields
+            currentBranch.querySelector('select[name="branch"]').value = '';
+            currentBranch.querySelector('input[name="checkin_time"]').value = '';
+            currentBranch.querySelector('input[name="location"]').value = '';
+            currentBranch.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            currentBranch.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+            currentBranch.querySelector('textarea[name="remarks"]').value = '';
+            currentBranch.querySelector('input[name="checkout_time"]').value = '';
+            currentBranch.querySelector('select[name="next_branch"]').value = '';
+
+            // Update branch count
+            branchCount++;
+            currentBranch.querySelector('.branch-title').textContent = `Branch ${branchCount}`;
+        }
+
+        function removeBranch(element) {
+            element.closest('.branch-section').remove();
+        }
+    </script>
+</body>
+</html> 
